@@ -1,0 +1,59 @@
+from config import OPERATORS
+
+
+def simple_calculator(expression):
+    parts = expression.split()
+
+    if len(parts) != 3:
+        raise ValueError("Неправильный формат выражения. Используйте: число оператор число")
+
+    try:
+        num1_str, operator, num2_str = parts
+        num1 = float(num1_str)
+        num2 = float(num2_str)
+    except ValueError:
+        raise ValueError("Ошибка преобразования чисел")
+
+    if operator not in OPERATORS:
+        raise ValueError(f"Неподдерживаемый оператор: {operator}. Доступные: {list(OPERATORS.keys())}")
+
+    return OPERATORS[operator](num1, num2)
+
+
+def test_simple_calculator():
+    test_cases = [
+        ("2 + 3", 5),
+        ("10 - 4", 6),
+        ("3 * 5", 15),
+        ("8 / 2", 4),
+        ("0 * 5", 0),
+        ("5 - 10", -5),
+        ("2.5 + 3.5", 6.0),
+        ("10 / 4", 2.5)
+    ]
+
+    print("Тестирование простого калькулятора:")
+    print("-" * 40)
+
+    for expression, expected in test_cases:
+        try:
+            result = simple_calculator(expression)
+            status = "✓" if abs(result - expected) < 0.0001 else "✗"
+            print(f"{status} {expression} = {result} (ожидалось: {expected})")
+        except Exception as e:
+            print(f"✗ {expression} -> Ошибка: {e}")
+
+    error_cases = [
+        "2 + 3 4",
+        "2 & 3",
+        "5 / 0",
+        "abc + 2",
+    ]
+
+    print("\nТестирование обработки ошибок:")
+    for expression in error_cases:
+        try:
+            result = simple_calculator(expression)
+            print(f"✗ {expression} -> Ожидалась ошибка, но получен результат: {result}")
+        except Exception as e:
+            print(f"✓ {expression} -> Правильно обработана ошибка: {e}")
